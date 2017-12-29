@@ -1,21 +1,28 @@
 node {
-  def artServer = Artifactory.server('yodafrog')
-   artServer.credentialsId='yodafrog-ci'
-   def buildInfo = Artifactory.newBuildInfo()
-   stage 'Checkout Gradle'
-        git url: 'https://github.com/jroquelaure/demo-jfrog-android.git'
-// dir('gradle-examples/4/gradle-example-ci-server') {
-//  sh './increment.sh'
-// }
+    
+    def imageDroid =  docker.image('yodafrog.sas.jfrog.internal:5001/jenkins-android-slave')
+    imageDroid.pull()
+    imageDroid.inside('-v /etc/passwd:/etc/passwd -v /tmp/:/tmp/') 
+    {
+        def artServer = Artifactory.server('yodafrog')
+        artServer.credentialsId='yodafrog-ci'
+        def buildInfo = Artifactory.newBuildInfo()
+        stage 'Checkout Gradle'
+            git url: 'https://github.com/jroquelaure/demo-jfrog-android.git'
+    // dir('gradle-examples/4/gradle-example-ci-server') {
+    //  sh './increment.sh'
+    // }
 
-    stage 'Build Gradle'
-        def artifactoryGradle = Artifactory.newGradleBuild()
-        artifactoryGradle.tool = 'GRADLE_TOOL' // Tool name from Jenkins configuration
-        artifactoryGradle.deployer repo:'android-dev-local', server: artServer
-        artifactoryGradle.resolver repo:'android-jon', server: artServer
-        artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
+        stage 'Build Gradle'
+        
+            def artifactoryGradle = Artifactory.newGradleBuild()
+            artifactoryGradle.tool = 'GRADLE_TOOL' // Tool name from Jenkins configuration
+            artifactoryGradle.deployer repo:'android-dev-local', server: artServer
+            artifactoryGradle.resolver repo:'android-jon', server: artServer
+            artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
 
-        artServer.publishBuildInfo buildInfo
+            artServer.publishBuildInfo buildInfo
+    }
 }
 
 node {
