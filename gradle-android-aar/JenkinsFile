@@ -19,7 +19,7 @@ node {
             artifactoryGradle.tool = 'GRADLE_TOOL' // Tool name from Jenkins configuration
             artifactoryGradle.deployer repo:'android-dev-local', server: artServer
             artifactoryGradle.resolver repo:'android-jon', server: artServer
-            artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
+            artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'gradle-android-aar/build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
 
             artServer.publishBuildInfo buildInfo
     }
