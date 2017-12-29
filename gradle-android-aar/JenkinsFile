@@ -1,6 +1,6 @@
 node {
     
-    def imageDroid =  docker.image('yodafrog.sas.jfrog.internal:5001/jenkins-android-slave')
+    def imageDroid =  docker.image('yodafrog.sas.jfrog.internal:5001/codetroopers/jenkins-slave-jdk8-android')
     imageDroid.pull()
     imageDroid.inside('-v /etc/passwd:/etc/passwd -v /tmp/:/tmp/') 
     {
