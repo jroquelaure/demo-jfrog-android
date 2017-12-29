@@ -11,28 +11,10 @@ buildscript {
 // Plugins
 apply plugin: 'com.android.library'
 
-apply plugin: 'maven-publish'
+
 
 def artifactVersion = '1.3'
 
-publishing {
-    publications {
-        aar(MavenPublication) {
-            groupId = 'org.jfrog.example.android'
-            artifactId project.name
-            version = "1.2"
-            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
-
-            pom.withXml {
-                def root = asNode()
-                def license = root.appendNode('licenses').appendNode('license')
-                license.appendNode('name', 'The Apache Software License, Version 2.0')
-                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
-                license.appendNode('distribution', 'repo')
-            }
-        }
-    }
-}
 
 // Android
 android {
