@@ -13,6 +13,7 @@ node {
             sh 'export ANDROID_HOME="/opt/android-sdk"'
             sh 'export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"'
             def artifactoryGradle = Artifactory.newGradleBuild()
+            artifactoryGradle.deployer.deployMavenDescriptors = true
             artifactoryGradle.tool = 'GRADLE_TOOL' // Tool name from Jenkins configuration
             artifactoryGradle.deployer repo:'android-dev-local', server: artServer
             artifactoryGradle.resolver repo:'android-jon', server: artServer
