@@ -18,7 +18,7 @@ node {
             artifactoryGradle.deployer repo:'android-dev-local', server: artServer
             artifactoryGradle.deployer.deployMavenDescriptors = true
             artifactoryGradle.resolver repo:'android-jon', server: artServer
-            rtGradle.usesPlugin = true 
+            artifactoryGradle.usesPlugin = true 
             artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
 
             artServer.publishBuildInfo buildInfo
