@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'com.android.library'
 
 // Android
@@ -30,11 +30,14 @@ android {
 repositories {
     jcenter()
 }
-
-allprojects {
-    group = 'org.jfrog.example.android'
-    version = '1.3'
-    status = 'release'
+task createPom << {
+    pom {
+        project {
+            groupId 'org.jfrog.example.android'
+            artifactId 'gradle-android-aar'
+            version "1.3"
+        }
+    }.writeTo("pom.xml")
 }
 
 
