@@ -1,0 +1,109 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.6.0'
+    }
+}
+
+
+
+
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'com.android.application'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 25
+    defaultConfig {
+        applicationId "com.jfrog.org.tinyfrog"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+
+artifactoryPublish.dependsOn('build')
+
+publishing {
+    publications {
+        app(MavenPublication) {
+            groupId = 'org.jfrog.example.com'
+            artifactId = project.getName()
+            version = 1.0
+            artifact("$buildDir/outputs/apk/release/app-release-unsigned.apk")
+        }
+    }
+}
+
+artifactoryPublish {
+    publications(publishing.publications.app)
+}
+
+    artifactory {
+        contextUrl = "${artifactory_contextUrl}"
+        publish {
+            repository {
+                // The Artifactory repository key to publish to
+                repoKey = 'android-dev-local'
+                username = "${artifactory_user}" // The publisher user name
+                password = "${artifactory_password}" // The publisher password
+                maven = true
+            }
+            defaults {
+                properties = ['build.status': "$it.project.status".toString()]
+                publishArtifacts = true
+                publishPom = true //Publish generated POM files to Artifactory (true by default)
+                publishIvy = false //Publish generated Ivy descriptor files to Artifactory (true by default)
+            }
+        }
+        resolve {
+            repository {
+                repoKey = 'android-jon'
+                username = "${artifactory_user}" // The resolver user name
+                password = "${artifactory_password}" // The resolver password
+            }
+        }
+    }
+
+configurations.all {
+    resolutionStrategy {
+        cacheDynamicVersionsFor 0, "seconds"
+        cacheChangingModulesFor 0, "seconds"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        maven {
+            url 'http://yodafrog.sas.jfrog.internal:8081/artifactory/android-jon'
+            credentials {
+                username = "admin"
+                password = "password"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    compile(group: 'org.jfrog.example.android', name: 'gradle-android-aar', version: 'latest.release', ext: 'aar') {changing = true}
+}
