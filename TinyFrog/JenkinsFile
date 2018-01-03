@@ -1,0 +1,79 @@
+node {
+    
+        def artServer = Artifactory.server('yodafrog')
+        artServer.credentialsId='yodafrog-ci'
+        def buildInfo = Artifactory.newBuildInfo()
+        stage 'Checkout Gradle'
+            git url: 'https://github.com/jroquelaure/demo-jfrog-android.git'
+
+        stage 'Build Gradle'
+            sh 'export ANDROID_HOME="/opt/android-sdk"'
+            sh 'export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"'
+            def artifactoryGradle = Artifactory.newGradleBuild()
+            
+            artifactoryGradle.tool = 'GRADLE_TOOL' // Tool name from Jenkins configuration
+            artifactoryGradle.deployer repo:'android-dev-local', server: artServer
+            artifactoryGradle.deployer.deployMavenDescriptors = true
+            artifactoryGradle.resolver repo:'android-jon', server: artServer
+            artifactoryGradle.usesPlugin = true 
+            artifactoryGradle.run rootDir: "TinyFrog/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
+
+            artServer.publishBuildInfo buildInfo
+    }
+
+
+node {
+    git url: 'https://github.com/jroquelaure/demo-jfrog-android.git'
+    def artServer = Artifactory.server('yodafrog')
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'yodafrog-ci',
+    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+    def uname=env.USERNAME
+    def pw=env.PASSWORD
+    artServer.username=uname
+    artServer.password=pw      
+    def curlstr="curl -H 'X-JFrog-Art-Api:$pw' '$artServer.url" 
+    dir('docker-app')
+        {
+            stage('test')
+            {
+                //TODO
+            }
+        
+            stage('Xray scan')
+            {
+                def xrayConfig = [
+                    //Mandatory parameters
+                    'buildName'         : env.JOB_NAME,
+                    'buildNumber'       : env.BUILD_NUMBER,
+
+                    //Optional
+                    'failBuild'        : false
+                ]
+
+                // Scan xray build
+                def xrayResults = artServer.xrayScan xrayConfig
+                // Print full report from xray
+                echo xrayResults as String
+            }
+
+            stage('promote') 
+            {
+                def promotionConfig = [
+                // Mandatory parameters
+                'buildName'          : env.JOB_NAME,
+                'buildNumber'        : env.BUILD_NUMBER,
+                'targetRepo'         : 'android-release-local',
+
+                // Optional parameters
+                'comment'            : 'ready for release',
+                'sourceRepo'         : 'android-dev-local',
+                'status'             : 'Released',
+                'includeDependencies': true,
+                'copy'               : true
+                ]
+                // Promote build
+                artServer.promote promotionConfig
+            }
+        }
+    }
+}
