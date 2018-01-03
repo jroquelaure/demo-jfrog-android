@@ -5,13 +5,13 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4'
     }
 }
 
-// Plugins
+apply plugin: 'maven'
 apply plugin: 'com.android.library'
-
-
+apply plugin: 'com.jfrog.artifactory'
 
 // Android
 android {
