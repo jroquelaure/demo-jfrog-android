@@ -65,17 +65,17 @@ node {
                 // Mandatory parameters
                 'buildName'          : env.JOB_NAME,
                 'buildNumber'        : env.BUILD_NUMBER,
-                'targetRepo'         : 'libs-release-local',
+                'targetRepo'         : 'android-release-local',
 
                 // Optional parameters
                 'comment'            : 'ready for release',
-                'sourceRepo'         : 'libs-dev-local',
+                'sourceRepo'         : 'android-dev-local',
                 'status'             : 'Released',
                 'includeDependencies': true,
                 'copy'               : true
                 ]
                 // Promote build
-               // artServer.promote promotionConfig
+                artServer.promote promotionConfig
             }
         }
         stage('distribute')
@@ -95,7 +95,7 @@ node {
                     'dryRun'                : false, // Default: false. If true, distribution is only simulated. No files are actually moved.
                 ]
 
-                //artServer.distribute distributionConfig
+                artServer.distribute distributionConfig
            
             }
     }
