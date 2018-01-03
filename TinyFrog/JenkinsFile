@@ -16,7 +16,7 @@ node {
             artifactoryGradle.deployer.deployMavenDescriptors = true
             artifactoryGradle.resolver repo:'android-jon', server: artServer
             artifactoryGradle.usesPlugin = true 
-            artifactoryGradle.run rootDir: "TinyFrog/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
+            artifactoryGradle.run rootDir: "TinyFrog/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish --stacktrace', buildInfo: buildInfo
 
             artServer.publishBuildInfo buildInfo
     }
