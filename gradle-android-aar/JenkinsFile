@@ -22,7 +22,8 @@ node {
             artifactoryGradle.deployer.deployMavenDescriptors = true
             artifactoryGradle.resolver repo:'android-jon', server: artServer
             artifactoryGradle.usesPlugin = true 
-            artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
+            //https://issues.jenkins-ci.org/browse/JENKINS-33510 => need to hardcode path to build.gradle as working directory cannot be change within container
+            artifactoryGradle.run rootDir: "gradle-android-aar/", buildFile: 'gradle-android-aar/build.gradle', tasks: 'clean artifactoryPublish', buildInfo: buildInfo
 
             artServer.publishBuildInfo buildInfo
         }
