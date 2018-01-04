@@ -13,8 +13,8 @@ node {
         // }
 
         stage 'Build Gradle'
-            sh 'export ANDROID_HOME="/opt/android-sdk"'
-            sh 'export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"'
+            //sh 'export ANDROID_HOME="/opt/android-sdk"'
+            //sh 'export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"'
             def artifactoryGradle = Artifactory.newGradleBuild()
             
             artifactoryGradle.tool = 'GRADLE_TOOL' // Tool name from Jenkins configuration
