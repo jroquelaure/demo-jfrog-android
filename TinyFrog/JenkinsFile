@@ -1,5 +1,5 @@
 node {
-        def imageDroid =  docker.image('docker-dev.yodafrog.sas.jfrog.internal:8081/jfrog/jenkins-android-slave:sdk-25.0')
+        def imageDroid =  docker.image('ackee/jenkins-android-docker-slave')
         imageDroid.pull()
         imageDroid.inside('-v /var/lib/jenkins/tools/:/var/lib/jenkins/tools/ -v /tmp/:/tmp/')
         {
@@ -13,6 +13,7 @@ node {
         // }
 
         stage 'Build Gradle'
+           
             //sh 'export ANDROID_HOME="/opt/android-sdk"'
             //sh 'export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"'
             def artifactoryGradle = Artifactory.newGradleBuild()
