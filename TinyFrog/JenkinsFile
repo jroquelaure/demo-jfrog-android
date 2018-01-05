@@ -1,5 +1,5 @@
 node {
-        def imageDroid =  docker.image('docker-dev.yodafrog.sas.jfrog.internal:8081/jfrog/jenkins-android-slave')
+        def imageDroid =  docker.image('docker-dev.yodafrog.sas.jfrog.internal:8081/jfrog/jenkins-android-slave:sdk-25.0')
         imageDroid.pull()
         imageDroid.inside('-v /var/lib/jenkins/tools/:/var/lib/jenkins/tools/ -v /tmp/:/tmp/')
         {
