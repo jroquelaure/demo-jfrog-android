@@ -13,7 +13,6 @@ node {
         // }
 
         stage 'Build Gradle'
-           sh '(while sleep 3; do echo "y"; done) | sudo $ANDROID_HOME/tools/android update sdk -u'
             //sh 'export ANDROID_HOME="/opt/android-sdk"'
             //sh 'export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"'
             def artifactoryGradle = Artifactory.newGradleBuild()
